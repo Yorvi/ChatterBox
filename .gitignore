@@ -1,0 +1,18 @@
+# ignore environment variables files
+.env
+
+# ignore mac system files
+.DS_Store
+
+# ignore log files 
+*.log
+
+# ignore node_modules folder
+node_modules/
+
+# ignore python cache files
+__pycache__/
+
+# ignore build outputs
+dist/
+build/
