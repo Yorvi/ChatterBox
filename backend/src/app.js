@@ -1,32 +1,22 @@
-// backend/src/app.js
+// app.js
 const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
-const path = require('path');
-const errorHandler = require('./middlewares/errorHandler');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
-
-const authRoutes = require('./routes/authRoutes');
-const postRoutes = require('./routes/postRoutes');
-// ... other imports
+const userRoutes = require('./routes/userRoutes');
+const sequelize = require('../config/database');
 
 const app = express();
 
 // Middleware
-app.use(express.json());
-app.use(cors());
-app.use(morgan('dev'));
-// Error Handler Middleware
-app.use(errorHandler);
+app.use(express.json()); // Parse incoming JSON requests
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/posts', postRoutes);
-// ... other routes
+app.use('/api/users', userRoutes);
 
-// Sample route
-app.get('/', (req, res) => {
-  res.send('Welcome to ChatterBox Backend!');
-});
+// Sync Database
+sequelize
+  .authenticate()
+  .then(() => console.log('Database connected...'))
+  .catch((err) => console.error('Error connecting to the database:', err));
+
+sequelize.sync({ force: false }); // Don't force in production
 
 module.exports = app;
