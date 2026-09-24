@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, User } from '../models/user.model';
+import { SocketService } from './socket.service';
 
 const TOKEN_KEY = 'chatterbox_token';
 const USER_KEY = 'chatterbox_user';
@@ -16,8 +17,14 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
-  ) {}
+    private router: Router,
+    private socket: SocketService
+  ) {
+    const token = this.getToken();
+    if (token && this.currentUserSignal()) {
+      this.socket.connect(token);
+    }
+  }
 
   register(username: string, email: string, password: string): Observable<AuthResponse> {
     return this.http
@@ -35,6 +42,7 @@ export class AuthService {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this.currentUserSignal.set(null);
+    this.socket.disconnect();
     this.router.navigate(['/login']);
   }
 
@@ -46,6 +54,7 @@ export class AuthService {
     localStorage.setItem(TOKEN_KEY, res.token);
     localStorage.setItem(USER_KEY, JSON.stringify(res.user));
     this.currentUserSignal.set(res.user);
+    this.socket.connect(res.token);
   }
 
   private readStoredUser(): User | null {

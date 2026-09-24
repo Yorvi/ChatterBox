@@ -1,5 +1,12 @@
 <mat-toolbar color="primary">
   <span class="brand" routerLink="/timeline">ChatterBox</span>
+  @if (auth.isLoggedIn()) {
+    <nav class="nav-links">
+      <a mat-button routerLink="/timeline">Timeline</a>
+      <a mat-button routerLink="/friends">Friends</a>
+      <a mat-button routerLink="/messages">Messages</a>
+    </nav>
+  }
   <span class="spacer"></span>
   @if (auth.isLoggedIn()) {
     <span class="username">{{ auth.currentUser()?.username }}</span>
