@@ -28,7 +28,18 @@ exports.register = async (req, res) => {
       expiresIn: '1h',
     });
 
-    res.status(201).json({ token, user: { id: user.id, username: user.username, email: user.email } });
+    res.status(201).json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        profilePhoto: user.profilePhoto,
+        coverPhoto: user.coverPhoto,
+        bio: user.bio,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -55,7 +66,18 @@ exports.login = async (req, res) => {
       expiresIn: '1h',
     });
 
-    res.status(200).json({ token, user: { id: user.id, username: user.username, email: user.email } });
+    res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        profilePhoto: user.profilePhoto,
+        coverPhoto: user.coverPhoto,
+        bio: user.bio,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

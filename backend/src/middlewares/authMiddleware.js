@@ -1,7 +1,7 @@
 // backend/src/middlewares/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const User = require('../models/User');
 const logger = require('../utils/logger');
 
@@ -43,4 +43,12 @@ exports.authenticate = async (req, res, next) => {
     logger.error('Authentication error', { error });
     res.status(401).json({ message: 'Not authorized, token invalid' });
   }
+};
+
+// Usage: router.get('/path', authenticate, authorize('admin'), handler)
+exports.authorize = (...roles) => (req, res, next) => {
+  if (!req.user || !roles.includes(req.user.role)) {
+    return res.status(403).json({ message: 'Forbidden: insufficient permissions' });
+  }
+  next();
 };

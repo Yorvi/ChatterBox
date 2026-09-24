@@ -1,0 +1,78 @@
+<div class="friends-page">
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else {
+    <mat-tab-group>
+      <mat-tab [label]="'People (' + people().length + ')'">
+        @if (people().length === 0) {
+          <p class="empty">No one else has joined yet.</p>
+        } @else {
+          <mat-list>
+            @for (user of people(); track user.id) {
+              <mat-list-item>
+                <app-avatar matListItemAvatar [username]="user.username" [photoUrl]="user.profilePhoto"></app-avatar>
+                <a matListItemTitle [routerLink]="['/profile', user.id]">{{ user.username }}</a>
+                <button matListItemMeta
+                  mat-stroked-button
+                  color="primary"
+                  [disabled]="hasSentRequest(user.id)"
+                  (click)="sendRequest(user)"
+                >
+                  {{ hasSentRequest(user.id) ? 'Request sent' : 'Add friend' }}
+                </button>
+              </mat-list-item>
+            }
+          </mat-list>
+        }
+      </mat-tab>
+
+      <mat-tab [label]="'Requests (' + pendingRequests().length + ')'">
+        @if (pendingRequests().length === 0) {
+          <p class="empty">No pending friend requests.</p>
+        } @else {
+          <mat-list>
+            @for (request of pendingRequests(); track request.id) {
+              <mat-list-item>
+                <app-avatar
+                  matListItemAvatar
+                  [username]="request.sender?.username ?? ''"
+                  [photoUrl]="request.sender?.profilePhoto"
+                ></app-avatar>
+                <a matListItemTitle [routerLink]="['/profile', request.sender?.id]">{{ request.sender?.username }}</a>
+                <div matListItemMeta class="request-actions">
+                  <button mat-icon-button color="primary" (click)="respond(request, 'accept')" aria-label="Accept">
+                    <mat-icon>check</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="respond(request, 'reject')" aria-label="Reject">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              </mat-list-item>
+            }
+          </mat-list>
+        }
+      </mat-tab>
+
+      <mat-tab [label]="'Friends (' + friends().length + ')'">
+        @if (friends().length === 0) {
+          <p class="empty">No friends yet - add some people!</p>
+        } @else {
+          <mat-list>
+            @for (friend of friends(); track friend.id) {
+              <mat-list-item>
+                <app-avatar matListItemAvatar [username]="friend.username" [photoUrl]="friend.profilePhoto"></app-avatar>
+                <a matListItemTitle [routerLink]="['/profile', friend.id]">{{ friend.username }}</a>
+                <button matListItemMeta mat-stroked-button (click)="messageFriend(friend)">
+                  <mat-icon>chat</mat-icon>
+                  Message
+                </button>
+              </mat-list-item>
+            }
+          </mat-list>
+        }
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

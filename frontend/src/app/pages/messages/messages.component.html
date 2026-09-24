@@ -1,0 +1,85 @@
+<div class="messages-page">
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else {
+    <aside class="contacts">
+      @if (contacts().length === 0) {
+        <p class="empty">Add some friends to start chatting.</p>
+      } @else {
+        <mat-nav-list>
+          @for (contact of contacts(); track contact.user.id) {
+            <a
+              mat-list-item
+              [class.selected]="selectedUser()?.id === contact.user.id"
+              (click)="selectContact(contact.user)"
+            >
+              <app-avatar
+                matListItemAvatar
+                [username]="contact.user.username"
+                [photoUrl]="contact.user.profilePhoto"
+              ></app-avatar>
+              <span matListItemTitle [class.unread]="isUnread(contact)">{{ contact.user.username }}</span>
+              @if (contact.lastMessage) {
+                <span matListItemLine class="preview">{{ contact.lastMessage.content }}</span>
+              }
+            </a>
+          }
+        </mat-nav-list>
+      }
+    </aside>
+
+    <section class="chat">
+      @if (!selectedUser()) {
+        <div class="no-selection">
+          <p>Select a conversation to start chatting.</p>
+        </div>
+      } @else {
+        <header class="chat-header">
+          <a class="chat-header-link" [routerLink]="['/profile', selectedUser()?.id]">
+            <app-avatar
+              [username]="selectedUser()?.username ?? ''"
+              [photoUrl]="selectedUser()?.profilePhoto"
+              [size]="32"
+            ></app-avatar>
+            <h3>{{ selectedUser()?.username }}</h3>
+          </a>
+        </header>
+
+        <div class="thread">
+          @for (message of messages(); track message.id) {
+            <div class="bubble" [class.mine]="isMine(message)">
+              <p>{{ message.content }}</p>
+              <span class="meta">
+                {{ message.createdAt | date: 'shortTime' }}
+                @if (isMine(message) && message.read) {
+                  <mat-icon inline="true">done_all</mat-icon>
+                }
+              </span>
+            </div>
+          }
+          @if (isTyping()) {
+            <p class="typing">{{ selectedUser()?.username }} is typing...</p>
+          }
+        </div>
+
+        <div class="composer">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Message</mat-label>
+            <input
+              matInput
+              [ngModel]="newMessageContent()"
+              (ngModelChange)="newMessageContent.set($event)"
+              (input)="onTyping()"
+              (keydown.enter)="sendMessage()"
+            />
+          </mat-form-field>
+          <button mat-icon-button color="primary" (click)="sendMessage()">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      }
+    </section>
+  }
+</div>

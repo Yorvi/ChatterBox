@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: chatterbox-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SSL
+        value: true
+      - key: JWT_SECRET
+        generateValue: true
+      # Filled in during Blueprint creation from your MySQL provider (e.g. PlanetScale)
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # The deployed frontend's URL, for CORS - update once the static site below is live
+      - key: CLIENT_URL
+        sync: false
+
+  - type: web
+    name: chatterbox-app
+    runtime: static
+    rootDir: frontend
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist/frontend/browser
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

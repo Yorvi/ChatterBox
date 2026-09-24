@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+
+// Self-hosted fonts - no runtime dependency on fonts.googleapis.com
+@use '@fontsource/roboto/300.css' as *;
+@use '@fontsource/roboto/400.css' as *;
+@use '@fontsource/roboto/500.css' as *;
+@use 'material-icons/iconfont/material-icons.scss' as *;
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

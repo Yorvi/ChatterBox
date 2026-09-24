@@ -4,12 +4,20 @@ const sequelize = require('../../config/database');
 const User = require('./User');
 const Post = require('./Post');
 
-const Comment = sequelize.define('Comment', {
-  content: {
-    type: DataTypes.TEXT,
-    allowNull: false,
+const Comment = sequelize.define(
+  'Comment',
+  {
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
   },
-});
+  {
+    tableName: 'comments',
+    timestamps: true,
+    underscored: true,
+  }
+);
 
 // Associations
 Comment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
