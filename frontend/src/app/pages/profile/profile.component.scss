@@ -70,6 +70,23 @@
   margin-top: 16px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.photo-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cover-preview {
+  width: 96px;
+  height: 56px;
+  border-radius: 8px;
+  background-color: #c5cae9;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
 }
 
 .full-width {

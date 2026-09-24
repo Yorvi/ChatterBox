@@ -54,15 +54,46 @@
             <textarea matInput rows="3" formControlName="bio"></textarea>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Profile photo URL</mat-label>
-            <input matInput formControlName="profilePhoto" placeholder="https://..." />
-          </mat-form-field>
+          <div class="photo-field">
+            <app-avatar [username]="profile()!.username" [photoUrl]="form.value.profilePhoto" [size]="56"></app-avatar>
+            <input
+              #profilePhotoInput
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              hidden
+              (change)="onProfilePhotoSelected($event)"
+            />
+            <button
+              mat-stroked-button
+              type="button"
+              [disabled]="uploadingProfilePhoto()"
+              (click)="profilePhotoInput.click()"
+            >
+              {{ uploadingProfilePhoto() ? 'Uploading...' : 'Change profile photo' }}
+            </button>
+          </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Cover photo URL</mat-label>
-            <input matInput formControlName="coverPhoto" placeholder="https://..." />
-          </mat-form-field>
+          <div class="photo-field">
+            <div
+              class="cover-preview"
+              [style.backgroundImage]="form.value.coverPhoto ? 'url(' + form.value.coverPhoto + ')' : null"
+            ></div>
+            <input
+              #coverPhotoInput
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              hidden
+              (change)="onCoverPhotoSelected($event)"
+            />
+            <button
+              mat-stroked-button
+              type="button"
+              [disabled]="uploadingCoverPhoto()"
+              (click)="coverPhotoInput.click()"
+            >
+              {{ uploadingCoverPhoto() ? 'Uploading...' : 'Change cover photo' }}
+            </button>
+          </div>
 
           <div class="edit-actions">
             <button mat-button type="button" (click)="cancelEditing()">Cancel</button>

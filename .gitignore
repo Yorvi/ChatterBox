@@ -13,6 +13,9 @@
 **/logs/
 *.log
 
+# User-uploaded files (local disk storage in dev)
+backend/uploads/
+
 # OS-specific files
 .DS_Store
 

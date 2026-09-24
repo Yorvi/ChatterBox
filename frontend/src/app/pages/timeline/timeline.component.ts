@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { PostService } from '../../core/services/post.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ReportService } from '../../core/services/report.service';
+import { UploadService, validateUploadFile } from '../../core/services/upload.service';
 import { AvatarComponent } from '../../shared/avatar/avatar.component';
 import { ReportDialogComponent } from '../../shared/report-dialog/report-dialog.component';
 import { Comment, Post } from '../../core/models/post.model';
@@ -40,6 +41,8 @@ export class TimelineComponent implements OnInit {
   readonly loading = signal(true);
   readonly posting = signal(false);
   readonly newPostContent = signal('');
+  readonly pendingMediaUrl = signal<string | null>(null);
+  readonly uploadingMedia = signal(false);
 
   readonly expandedPostIds = signal<Set<number>>(new Set());
   readonly commentsByPost = signal<Record<number, Comment[]>>({});
@@ -48,6 +51,7 @@ export class TimelineComponent implements OnInit {
   constructor(
     private postService: PostService,
     private reportService: ReportService,
+    private uploadService: UploadService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     readonly auth: AuthService
@@ -68,6 +72,36 @@ export class TimelineComponent implements OnInit {
     });
   }
 
+  onMediaSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    (event.target as HTMLInputElement).value = '';
+    if (!file) {
+      return;
+    }
+
+    const validationError = validateUploadFile(file);
+    if (validationError) {
+      this.snackBar.open(validationError, 'Dismiss', { duration: 4000 });
+      return;
+    }
+
+    this.uploadingMedia.set(true);
+    this.uploadService.uploadFile(file).subscribe({
+      next: (res) => {
+        this.pendingMediaUrl.set(res.url);
+        this.uploadingMedia.set(false);
+      },
+      error: (err) => {
+        this.uploadingMedia.set(false);
+        this.snackBar.open(err.error?.message ?? 'Upload failed.', 'Dismiss', { duration: 4000 });
+      },
+    });
+  }
+
+  removePendingMedia(): void {
+    this.pendingMediaUrl.set(null);
+  }
+
   submitPost(): void {
     const content = this.newPostContent().trim();
     if (!content) {
@@ -75,9 +109,10 @@ export class TimelineComponent implements OnInit {
     }
 
     this.posting.set(true);
-    this.postService.createPost(content).subscribe({
+    this.postService.createPost(content, this.pendingMediaUrl() ?? undefined).subscribe({
       next: () => {
         this.newPostContent.set('');
+        this.pendingMediaUrl.set(null);
         this.posting.set(false);
         this.loadPosts();
       },

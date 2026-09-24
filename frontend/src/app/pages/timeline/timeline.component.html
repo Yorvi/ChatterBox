@@ -10,14 +10,47 @@
           (ngModelChange)="newPostContent.set($event)"
         ></textarea>
       </mat-form-field>
-      <button
-        mat-flat-button
-        color="primary"
-        [disabled]="!newPostContent().trim() || posting()"
-        (click)="submitPost()"
-      >
-        Post
-      </button>
+
+      @if (pendingMediaUrl()) {
+        <div class="media-preview">
+          <img [src]="pendingMediaUrl()" alt="" />
+          <button mat-icon-button (click)="removePendingMedia()" aria-label="Remove photo">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+
+      <div class="composer-actions">
+        <input
+          #mediaInput
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp"
+          hidden
+          (change)="onMediaSelected($event)"
+        />
+        <button
+          mat-icon-button
+          type="button"
+          [disabled]="uploadingMedia()"
+          (click)="mediaInput.click()"
+          aria-label="Attach photo"
+        >
+          @if (uploadingMedia()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>image</mat-icon>
+          }
+        </button>
+        <span class="spacer"></span>
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="!newPostContent().trim() || posting()"
+          (click)="submitPost()"
+        >
+          Post
+        </button>
+      </div>
     </mat-card-content>
   </mat-card>
 

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, WritableSignal, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +13,7 @@ import { UserService } from '../../core/services/user.service';
 import { FriendService } from '../../core/services/friend.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ReportService } from '../../core/services/report.service';
+import { UploadService, validateUploadFile } from '../../core/services/upload.service';
 import { AvatarComponent } from '../../shared/avatar/avatar.component';
 import { ReportDialogComponent } from '../../shared/report-dialog/report-dialog.component';
 import { User } from '../../core/models/user.model';
@@ -39,6 +40,7 @@ export class ProfileComponent implements OnInit {
   private userService = inject(UserService);
   private friendService = inject(FriendService);
   private reportService = inject(ReportService);
+  private uploadService = inject(UploadService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
@@ -50,6 +52,8 @@ export class ProfileComponent implements OnInit {
   readonly saving = signal(false);
   readonly isFriend = signal(false);
   readonly requestSent = signal(false);
+  readonly uploadingProfilePhoto = signal(false);
+  readonly uploadingCoverPhoto = signal(false);
 
   readonly isOwnProfile = computed(() => this.profile()?.id === this.auth.currentUser()?.id);
 
@@ -110,6 +114,44 @@ export class ProfileComponent implements OnInit {
       });
     }
     this.editing.set(false);
+  }
+
+  onProfilePhotoSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) {
+      return;
+    }
+    this.uploadPhoto(file, 'profilePhoto', this.uploadingProfilePhoto);
+    (event.target as HTMLInputElement).value = '';
+  }
+
+  onCoverPhotoSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) {
+      return;
+    }
+    this.uploadPhoto(file, 'coverPhoto', this.uploadingCoverPhoto);
+    (event.target as HTMLInputElement).value = '';
+  }
+
+  private uploadPhoto(file: File, controlName: 'profilePhoto' | 'coverPhoto', uploading: WritableSignal<boolean>): void {
+    const validationError = validateUploadFile(file);
+    if (validationError) {
+      this.snackBar.open(validationError, 'Dismiss', { duration: 4000 });
+      return;
+    }
+
+    uploading.set(true);
+    this.uploadService.uploadFile(file).subscribe({
+      next: (res) => {
+        this.form.patchValue({ [controlName]: res.url });
+        uploading.set(false);
+      },
+      error: (err) => {
+        uploading.set(false);
+        this.snackBar.open(err.error?.message ?? 'Upload failed.', 'Dismiss', { duration: 4000 });
+      },
+    });
   }
 
   save(): void {

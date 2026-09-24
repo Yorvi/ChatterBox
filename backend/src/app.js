@@ -16,6 +16,7 @@ const friendRequestRoutes = require('./routes/friendRequestRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -24,6 +25,10 @@ const app = express();
 app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
 app.use(morgan('dev'));
 app.use(express.json()); // Parse incoming JSON requests
+
+// Uploaded files (profile photos, cover photos, post media) - local disk for
+// now; swap for S3/Cloudinary in production without changing the API contract
+app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -34,6 +39,7 @@ app.use('/api/friend-requests', friendRequestRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/uploads', uploadRoutes);
 
 // Sync Database
 sequelize
