@@ -30,6 +30,9 @@ app.use(express.json()); // Parse incoming JSON requests
 // now; swap for S3/Cloudinary in production without changing the API contract
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
+// Used by the hosting platform's health check
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

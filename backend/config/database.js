@@ -11,7 +11,9 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: process.env.DB_PORT || 3306,
     dialect: 'mysql',
-    logging: console.log, // Set to false to disable logging
+    logging: process.env.NODE_ENV === 'production' ? false : console.log,
+    // Managed MySQL hosts (PlanetScale, etc.) require TLS - set DB_SSL=true for those
+    dialectOptions: process.env.DB_SSL === 'true' ? { ssl: { rejectUnauthorized: true } } : {},
   }
 );
 
