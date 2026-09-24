@@ -8,9 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { PostService } from '../../core/services/post.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ReportService } from '../../core/services/report.service';
 import { AvatarComponent } from '../../shared/avatar/avatar.component';
+import { ReportDialogComponent } from '../../shared/report-dialog/report-dialog.component';
 import { Comment, Post } from '../../core/models/post.model';
 
 @Component({
@@ -43,6 +47,9 @@ export class TimelineComponent implements OnInit {
 
   constructor(
     private postService: PostService,
+    private reportService: ReportService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     readonly auth: AuthService
   ) {}
 
@@ -87,6 +94,43 @@ export class TimelineComponent implements OnInit {
   canDelete(post: Post): boolean {
     const user = this.auth.currentUser();
     return !!user && (user.id === post.userId || user.role === 'admin');
+  }
+
+  isOwn(userId: number): boolean {
+    return this.auth.currentUser()?.id === userId;
+  }
+
+  reportPost(post: Post): void {
+    this.dialog
+      .open(ReportDialogComponent, { data: { targetLabel: 'this post' } })
+      .afterClosed()
+      .subscribe((reason?: string) => {
+        if (!reason) {
+          return;
+        }
+        this.reportService.createReport('post', post.id, reason).subscribe({
+          next: () => this.snackBar.open('Post reported. Thanks for letting us know.', 'Dismiss', { duration: 3000 }),
+          error: (err) =>
+            this.snackBar.open(err.error?.message ?? 'Could not submit report.', 'Dismiss', { duration: 3000 }),
+        });
+      });
+  }
+
+  reportComment(comment: Comment): void {
+    this.dialog
+      .open(ReportDialogComponent, { data: { targetLabel: 'this comment' } })
+      .afterClosed()
+      .subscribe((reason?: string) => {
+        if (!reason) {
+          return;
+        }
+        this.reportService.createReport('comment', comment.id, reason).subscribe({
+          next: () =>
+            this.snackBar.open('Comment reported. Thanks for letting us know.', 'Dismiss', { duration: 3000 }),
+          error: (err) =>
+            this.snackBar.open(err.error?.message ?? 'Could not submit report.', 'Dismiss', { duration: 3000 }),
+        });
+      });
   }
 
   toggleLike(post: Post): void {

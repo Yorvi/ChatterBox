@@ -39,6 +39,9 @@
               {{ requestSent() ? 'Request sent' : 'Add friend' }}
             </button>
           }
+          <button mat-icon-button (click)="reportUser()" aria-label="Report user">
+            <mat-icon>flag_outlined</mat-icon>
+          </button>
         }
       </div>
 

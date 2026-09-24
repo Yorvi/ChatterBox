@@ -58,6 +58,11 @@
             <mat-icon>chat_bubble_outline</mat-icon>
             {{ post.commentCount ?? 0 }}
           </button>
+          @if (!isOwn(post.userId)) {
+            <button mat-button (click)="reportPost(post)" aria-label="Report post">
+              <mat-icon>flag_outlined</mat-icon>
+            </button>
+          }
           @if (canDelete(post)) {
             <button mat-button color="warn" (click)="deletePost(post)">
               <mat-icon>delete_outline</mat-icon>
@@ -75,7 +80,12 @@
                   [size]="24"
                 ></app-avatar>
                 <a [routerLink]="['/profile', comment.author?.id]" class="author-link">{{ comment.author?.username }}</a>
-                <span>{{ comment.content }}</span>
+                <span class="comment-content">{{ comment.content }}</span>
+                @if (!isOwn(comment.userId)) {
+                  <button mat-icon-button (click)="reportComment(comment)" aria-label="Report comment">
+                    <mat-icon inline="true">flag_outlined</mat-icon>
+                  </button>
+                }
               </div>
             }
 

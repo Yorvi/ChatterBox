@@ -5,6 +5,9 @@
       <a mat-button routerLink="/timeline">Timeline</a>
       <a mat-button routerLink="/friends">Friends</a>
       <a mat-button routerLink="/messages">Messages</a>
+      @if (auth.currentUser()?.role === 'admin') {
+        <a mat-button routerLink="/admin">Admin</a>
+      }
     </nav>
   }
   <span class="spacer"></span>

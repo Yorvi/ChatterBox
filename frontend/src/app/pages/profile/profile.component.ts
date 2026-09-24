@@ -8,10 +8,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../../core/services/user.service';
 import { FriendService } from '../../core/services/friend.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ReportService } from '../../core/services/report.service';
 import { AvatarComponent } from '../../shared/avatar/avatar.component';
+import { ReportDialogComponent } from '../../shared/report-dialog/report-dialog.component';
 import { User } from '../../core/models/user.model';
 
 @Component({
@@ -35,6 +38,8 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
   private userService = inject(UserService);
   private friendService = inject(FriendService);
+  private reportService = inject(ReportService);
+  private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private fb = inject(FormBuilder);
   readonly auth = inject(AuthService);
@@ -155,5 +160,26 @@ export class ProfileComponent implements OnInit {
     if (user) {
       this.router.navigate(['/messages'], { queryParams: { with: user.id } });
     }
+  }
+
+  reportUser(): void {
+    const user = this.profile();
+    if (!user) {
+      return;
+    }
+
+    this.dialog
+      .open(ReportDialogComponent, { data: { targetLabel: `${user.username}` } })
+      .afterClosed()
+      .subscribe((reason?: string) => {
+        if (!reason) {
+          return;
+        }
+        this.reportService.createReport('user', user.id, reason).subscribe({
+          next: () => this.snackBar.open('User reported. Thanks for letting us know.', 'Dismiss', { duration: 3000 }),
+          error: (err) =>
+            this.snackBar.open(err.error?.message ?? 'Could not submit report.', 'Dismiss', { duration: 3000 }),
+        });
+      });
   }
 }

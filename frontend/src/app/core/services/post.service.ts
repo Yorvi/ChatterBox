@@ -16,6 +16,10 @@ export class PostService {
     return this.http.post<Post>(`${environment.apiUrl}/posts`, { content, mediaUrl });
   }
 
+  getPostById(postId: number): Observable<Post> {
+    return this.http.get<Post>(`${environment.apiUrl}/posts/${postId}`);
+  }
+
   deletePost(postId: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${environment.apiUrl}/posts/${postId}`);
   }

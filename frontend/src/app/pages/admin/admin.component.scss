@@ -1,0 +1,81 @@
+.admin-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+}
+
+.empty {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.report mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status {
+  margin-left: auto;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  background: #eee;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status.resolved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.dismissed {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.reason {
+  margin: 8px 0;
+}
+
+.preview {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+}
+
+.preview-text {
+  font-style: italic;
+  margin: 0;
+}
+
+.preview-author {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.preview-error {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}

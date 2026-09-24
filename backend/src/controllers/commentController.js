@@ -2,6 +2,20 @@
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 
+exports.getCommentById = async (req, res) => {
+  try {
+    const comment = await Comment.findByPk(req.params.id, {
+      include: [{ model: User, as: 'author', attributes: ['id', 'username', 'profilePhoto'] }],
+    });
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found.' });
+    }
+    res.status(200).json(comment);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 exports.createComment = async (req, res) => {
   try {
     const { content, postId, parentId } = req.body;

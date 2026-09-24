@@ -1,0 +1,75 @@
+<div class="admin-page">
+  <h2>Reports</h2>
+
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else if (reports().length === 0) {
+    <p class="empty">No reports filed.</p>
+  } @else {
+    @for (report of reports(); track report.id) {
+      <mat-card class="report">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon inline="true">
+              {{ report.targetType === 'post' ? 'article' : report.targetType === 'comment' ? 'comment' : 'person' }}
+            </mat-icon>
+            Reported {{ report.targetType }} #{{ report.targetId }}
+            <span class="status" [class]="report.status">{{ report.status }}</span>
+          </mat-card-title>
+          <mat-card-subtitle>
+            Reported by
+            <a [routerLink]="['/profile', report.reporter?.id]">{{ report.reporter?.username }}</a>
+            on {{ report.createdAt | date: 'medium' }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <p class="reason"><strong>Reason:</strong> {{ report.reason }}</p>
+
+          <button mat-button (click)="togglePreview(report)">
+            <mat-icon>{{ isExpanded(report) ? 'expand_less' : 'expand_more' }}</mat-icon>
+            {{ isExpanded(report) ? 'Hide' : 'View' }} content
+          </button>
+
+          @if (isExpanded(report)) {
+            @let preview = previewFor(report.id);
+            <div class="preview">
+              @if (!preview || preview.status === 'loading') {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else if (preview.status === 'error') {
+                <p class="preview-error">This content no longer exists.</p>
+              } @else if (report.targetType === 'user') {
+                <p>
+                  User:
+                  <a [routerLink]="['/profile', report.targetId]">{{ preview.authorUsername }}</a>
+                </p>
+              } @else {
+                <p class="preview-text">"{{ preview.text }}"</p>
+                <p class="preview-author">- {{ preview.authorUsername }}</p>
+              }
+            </div>
+          }
+        </mat-card-content>
+
+        <mat-card-actions class="actions">
+          @if (report.status === 'pending') {
+            <button mat-button color="primary" (click)="resolve(report, 'resolved')">
+              <mat-icon>check</mat-icon>
+              Resolve
+            </button>
+            <button mat-button (click)="resolve(report, 'dismissed')">
+              <mat-icon>close</mat-icon>
+              Dismiss
+            </button>
+          }
+          <button mat-button color="warn" (click)="deleteTarget(report)">
+            <mat-icon>delete_outline</mat-icon>
+            Delete {{ report.targetType }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    }
+  }
+</div>
