@@ -1,0 +1,67 @@
+.timeline {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.composer mat-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+}
+
+.empty {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.post .content {
+  white-space: pre-wrap;
+}
+
+.media {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
+.comments {
+  padding: 0 16px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.comment {
+  padding: 8px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.add-comment {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.add-comment .full-width {
+  flex: 1;
+}

@@ -38,7 +38,29 @@ exports.getAllPosts = async (req, res) => {
       offset: (page - 1) * limit,
     });
 
-    res.status(200).json(posts);
+    const postIds = posts.map((post) => post.id);
+    const myLikes = await Like.findAll({
+      where: { postId: postIds, userId: req.user.id },
+      attributes: ['postId'],
+    });
+    const likedPostIds = new Set(myLikes.map((like) => like.postId));
+
+    const postsWithCounts = await Promise.all(
+      posts.map(async (post) => {
+        const [likeCount, commentCount] = await Promise.all([
+          Like.count({ where: { postId: post.id } }),
+          Comment.count({ where: { postId: post.id } }),
+        ]);
+        return {
+          ...post.toJSON(),
+          likeCount,
+          commentCount,
+          liked: likedPostIds.has(post.id),
+        };
+      })
+    );
+
+    res.status(200).json(postsWithCounts);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

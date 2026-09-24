@@ -1,0 +1,20 @@
+import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+
+export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'timeline' },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./pages/register/register.component').then((m) => m.RegisterComponent),
+  },
+  {
+    path: 'timeline',
+    loadComponent: () => import('./pages/timeline/timeline.component').then((m) => m.TimelineComponent),
+    canActivate: [authGuard],
+  },
+  { path: '**', redirectTo: 'timeline' },
+];

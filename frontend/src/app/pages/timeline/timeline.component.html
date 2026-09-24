@@ -1,0 +1,89 @@
+<div class="timeline">
+  <mat-card class="composer">
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>What's on your mind, {{ auth.currentUser()?.username }}?</mat-label>
+        <textarea
+          matInput
+          rows="2"
+          [ngModel]="newPostContent()"
+          (ngModelChange)="newPostContent.set($event)"
+        ></textarea>
+      </mat-form-field>
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="!newPostContent().trim() || posting()"
+        (click)="submitPost()"
+      >
+        Post
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else if (posts().length === 0) {
+    <p class="empty">No posts yet - be the first to share something!</p>
+  } @else {
+    @for (post of posts(); track post.id) {
+      <mat-card class="post">
+        <mat-card-header>
+          <mat-card-title>{{ post.author?.username }}</mat-card-title>
+          <mat-card-subtitle>{{ post.createdAt | date: 'medium' }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <p class="content">{{ post.content }}</p>
+          @if (post.mediaUrl) {
+            <img class="media" [src]="post.mediaUrl" alt="" />
+          }
+        </mat-card-content>
+
+        <mat-card-actions class="actions">
+          <button mat-button (click)="toggleLike(post)">
+            <mat-icon>{{ post.liked ? 'favorite' : 'favorite_border' }}</mat-icon>
+            {{ post.likeCount ?? 0 }}
+          </button>
+          <button mat-button (click)="toggleComments(post)">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            {{ post.commentCount ?? 0 }}
+          </button>
+          @if (canDelete(post)) {
+            <button mat-button color="warn" (click)="deletePost(post)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          }
+        </mat-card-actions>
+
+        @if (isExpanded(post.id)) {
+          <div class="comments">
+            @for (comment of commentsFor(post.id); track comment.id) {
+              <div class="comment">
+                <strong>{{ comment.author?.username }}</strong>
+                <span>{{ comment.content }}</span>
+              </div>
+            }
+
+            <div class="add-comment">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Write a comment...</mat-label>
+                <input
+                  matInput
+                  [ngModel]="newCommentFor(post.id)"
+                  (ngModelChange)="setNewComment(post.id, $event)"
+                  (keydown.enter)="submitComment(post)"
+                />
+              </mat-form-field>
+              <button mat-icon-button (click)="submitComment(post)">
+                <mat-icon>send</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </mat-card>
+    }
+  }
+</div>

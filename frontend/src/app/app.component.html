@@ -1,0 +1,12 @@
+<mat-toolbar color="primary">
+  <span class="brand" routerLink="/timeline">ChatterBox</span>
+  <span class="spacer"></span>
+  @if (auth.isLoggedIn()) {
+    <span class="username">{{ auth.currentUser()?.username }}</span>
+    <button mat-icon-button (click)="auth.logout()" aria-label="Log out">
+      <mat-icon>logout</mat-icon>
+    </button>
+  }
+</mat-toolbar>
+
+<router-outlet></router-outlet>
