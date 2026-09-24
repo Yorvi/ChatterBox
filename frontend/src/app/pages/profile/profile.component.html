@@ -1,0 +1,74 @@
+<div class="profile-page">
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  } @else if (!profile()) {
+    <p class="empty">User not found.</p>
+  } @else {
+    <div class="cover" [style.backgroundImage]="profile()!.coverPhoto ? 'url(' + profile()!.coverPhoto + ')' : null">
+      <div class="avatar-wrap">
+        <app-avatar [username]="profile()!.username" [photoUrl]="profile()!.profilePhoto" [size]="96"></app-avatar>
+      </div>
+    </div>
+
+    <div class="details">
+      <div class="heading">
+        <h2>
+          {{ profile()!.username }}
+          @if (profile()!.role === 'admin') {
+            <span class="badge">admin</span>
+          }
+        </h2>
+
+        @if (isOwnProfile() && !editing()) {
+          <button mat-stroked-button (click)="startEditing()">
+            <mat-icon>edit</mat-icon>
+            Edit profile
+          </button>
+        }
+
+        @if (!isOwnProfile()) {
+          @if (isFriend()) {
+            <button mat-stroked-button (click)="messageUser()">
+              <mat-icon>chat</mat-icon>
+              Message
+            </button>
+          } @else {
+            <button mat-flat-button color="primary" [disabled]="requestSent()" (click)="sendFriendRequest()">
+              {{ requestSent() ? 'Request sent' : 'Add friend' }}
+            </button>
+          }
+        }
+      </div>
+
+      @if (!editing()) {
+        <p class="bio">{{ profile()!.bio || 'No bio yet.' }}</p>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="save()" class="edit-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Bio</mat-label>
+            <textarea matInput rows="3" formControlName="bio"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Profile photo URL</mat-label>
+            <input matInput formControlName="profilePhoto" placeholder="https://..." />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Cover photo URL</mat-label>
+            <input matInput formControlName="coverPhoto" placeholder="https://..." />
+          </mat-form-field>
+
+          <div class="edit-actions">
+            <button mat-button type="button" (click)="cancelEditing()">Cancel</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+              {{ saving() ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  }
+</div>

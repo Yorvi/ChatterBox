@@ -12,7 +12,8 @@
           <mat-list>
             @for (user of people(); track user.id) {
               <mat-list-item>
-                <span matListItemTitle>{{ user.username }}</span>
+                <app-avatar matListItemAvatar [username]="user.username" [photoUrl]="user.profilePhoto"></app-avatar>
+                <a matListItemTitle [routerLink]="['/profile', user.id]">{{ user.username }}</a>
                 <button matListItemMeta
                   mat-stroked-button
                   color="primary"
@@ -34,7 +35,12 @@
           <mat-list>
             @for (request of pendingRequests(); track request.id) {
               <mat-list-item>
-                <span matListItemTitle>{{ request.sender?.username }}</span>
+                <app-avatar
+                  matListItemAvatar
+                  [username]="request.sender?.username ?? ''"
+                  [photoUrl]="request.sender?.profilePhoto"
+                ></app-avatar>
+                <a matListItemTitle [routerLink]="['/profile', request.sender?.id]">{{ request.sender?.username }}</a>
                 <div matListItemMeta class="request-actions">
                   <button mat-icon-button color="primary" (click)="respond(request, 'accept')" aria-label="Accept">
                     <mat-icon>check</mat-icon>
@@ -56,7 +62,8 @@
           <mat-list>
             @for (friend of friends(); track friend.id) {
               <mat-list-item>
-                <span matListItemTitle>{{ friend.username }}</span>
+                <app-avatar matListItemAvatar [username]="friend.username" [photoUrl]="friend.profilePhoto"></app-avatar>
+                <a matListItemTitle [routerLink]="['/profile', friend.id]">{{ friend.username }}</a>
                 <button matListItemMeta mat-stroked-button (click)="messageFriend(friend)">
                   <mat-icon>chat</mat-icon>
                   Message

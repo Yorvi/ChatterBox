@@ -26,5 +26,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/messages/messages.component').then((m) => m.MessagesComponent),
     canActivate: [authGuard],
   },
+  {
+    path: 'profile/:id',
+    loadComponent: () => import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+    canActivate: [authGuard],
+  },
   { path: '**', redirectTo: 'timeline' },
 ];

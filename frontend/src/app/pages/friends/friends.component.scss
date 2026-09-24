@@ -25,3 +25,12 @@ mat-list-item {
   display: flex;
   gap: 4px;
 }
+
+a[matListItemTitle] {
+  color: inherit;
+  text-decoration: none;
+}
+
+a[matListItemTitle]:hover {
+  text-decoration: underline;
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UserService } from '../../core/services/user.service';
 import { FriendService } from '../../core/services/friend.service';
 import { AuthService } from '../../core/services/auth.service';
+import { AvatarComponent } from '../../shared/avatar/avatar.component';
 import { User } from '../../core/models/user.model';
 import { FriendRequest } from '../../core/models/friend-request.model';
 
@@ -16,11 +17,13 @@ import { FriendRequest } from '../../core/models/friend-request.model';
   selector: 'app-friends',
   standalone: true,
   imports: [
+    RouterLink,
     MatTabsModule,
     MatListModule,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    AvatarComponent,
   ],
   templateUrl: './friends.component.html',
   styleUrl: './friends.component.scss',

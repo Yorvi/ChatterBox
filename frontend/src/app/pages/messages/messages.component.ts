@@ -2,7 +2,7 @@ import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +14,7 @@ import { FriendService } from '../../core/services/friend.service';
 import { UserService } from '../../core/services/user.service';
 import { SocketService } from '../../core/services/socket.service';
 import { AuthService } from '../../core/services/auth.service';
+import { AvatarComponent } from '../../shared/avatar/avatar.component';
 import { Conversation, Message } from '../../core/models/message.model';
 import { User } from '../../core/models/user.model';
 
@@ -28,12 +29,14 @@ interface Contact {
   imports: [
     FormsModule,
     DatePipe,
+    RouterLink,
     MatListModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    AvatarComponent,
   ],
   templateUrl: './messages.component.html',
   styleUrl: './messages.component.scss',

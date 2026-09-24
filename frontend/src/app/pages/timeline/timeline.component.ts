@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PostService } from '../../core/services/post.service';
 import { AuthService } from '../../core/services/auth.service';
+import { AvatarComponent } from '../../shared/avatar/avatar.component';
 import { Comment, Post } from '../../core/models/post.model';
 
 @Component({
@@ -17,12 +19,14 @@ import { Comment, Post } from '../../core/models/post.model';
   imports: [
     FormsModule,
     DatePipe,
+    RouterLink,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    AvatarComponent,
   ],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',

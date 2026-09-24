@@ -15,6 +15,11 @@
               [class.selected]="selectedUser()?.id === contact.user.id"
               (click)="selectContact(contact.user)"
             >
+              <app-avatar
+                matListItemAvatar
+                [username]="contact.user.username"
+                [photoUrl]="contact.user.profilePhoto"
+              ></app-avatar>
               <span matListItemTitle [class.unread]="isUnread(contact)">{{ contact.user.username }}</span>
               @if (contact.lastMessage) {
                 <span matListItemLine class="preview">{{ contact.lastMessage.content }}</span>
@@ -32,7 +37,14 @@
         </div>
       } @else {
         <header class="chat-header">
-          <h3>{{ selectedUser()?.username }}</h3>
+          <a class="chat-header-link" [routerLink]="['/profile', selectedUser()?.id]">
+            <app-avatar
+              [username]="selectedUser()?.username ?? ''"
+              [photoUrl]="selectedUser()?.profilePhoto"
+              [size]="32"
+            ></app-avatar>
+            <h3>{{ selectedUser()?.username }}</h3>
+          </a>
         </header>
 
         <div class="thread">

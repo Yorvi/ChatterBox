@@ -9,7 +9,14 @@
   }
   <span class="spacer"></span>
   @if (auth.isLoggedIn()) {
-    <span class="username">{{ auth.currentUser()?.username }}</span>
+    <a class="profile-link" [routerLink]="['/profile', auth.currentUser()?.id]">
+      <app-avatar
+        [username]="auth.currentUser()?.username ?? ''"
+        [photoUrl]="auth.currentUser()?.profilePhoto"
+        [size]="28"
+      ></app-avatar>
+      <span class="username">{{ auth.currentUser()?.username }}</span>
+    </a>
     <button mat-icon-button (click)="auth.logout()" aria-label="Log out">
       <mat-icon>logout</mat-icon>
     </button>

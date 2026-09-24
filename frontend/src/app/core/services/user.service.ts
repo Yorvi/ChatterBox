@@ -15,4 +15,11 @@ export class UserService {
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${environment.apiUrl}/users/${id}`);
   }
+
+  updateProfile(
+    id: number,
+    changes: { bio?: string | null; profilePhoto?: string | null; coverPhoto?: string | null }
+  ): Observable<User> {
+    return this.http.put<User>(`${environment.apiUrl}/users/${id}`, changes);
+  }
 }
